@@ -78,16 +78,4 @@ public class XDocReportEscapeReference
         }
         return result;
     }
-
-    @Override
-    public Object referenceInsert( String reference, Object value )
-    {
-        if ( reference != null && ( reference.startsWith( NO_ESCAPE ) || reference.startsWith( NO_ESCAPE_FCT ) ) )
-        {
-            // Emulate [#noescape] directive of Freemarker.
-            return value;
-        }
-        return super.referenceInsert( reference, value );
-    }
-
 }

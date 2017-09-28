@@ -25,12 +25,13 @@
 package fr.opensagres.xdocreport.template.velocity.cache;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
-import org.apache.commons.collections.ExtendedProperties;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
+import org.apache.velocity.util.ExtProperties;
 
 import fr.opensagres.xdocreport.core.io.IEntryInfo;
 import fr.opensagres.xdocreport.core.io.XDocArchive;
@@ -51,20 +52,20 @@ public class XDocReportEntryResourceLoader
     private ITemplateEngine templateEngine = null;
 
     @Override
-    public void commonInit( RuntimeServices rs, ExtendedProperties configuration )
+    public void commonInit( RuntimeServices rs, ExtProperties configuration )
     {
         super.commonInit( rs, configuration );
         this.templateEngine = (ITemplateEngine) rs.getProperty( VELOCITY_TEMPLATE_ENGINE_KEY );
     }
 
     @Override
-    public void init( ExtendedProperties configuration )
+    public void init( ExtProperties configuration )
     {
         // Do nothing
     }
 
     @Override
-    public InputStream getResourceStream( String source )
+    public InputStreamReader getResourceReader( String source, String encoding )
         throws ResourceNotFoundException
     {
         IEntryInfo cacheInfo =
@@ -74,19 +75,11 @@ public class XDocReportEntryResourceLoader
             InputStream inputStream = cacheInfo.getInputStream();
             if ( inputStream != null )
             {
-                return inputStream;
+                return new InputStreamReader( inputStream );
             }
         }
         throw new ResourceNotFoundException( "Cannot find input stream for the entry with source=" + source );
-        //
-        //
-        // InputStream inputStream = getEntryInputStream(source);
-        // if (inputStream == null) {
-        // throw new ResourceNotFoundException(
-        // "Cannot find input stream for the entry with source="
-        // + source);
-        // }
-        // return inputStream;
+
     }
 
     /**
@@ -108,6 +101,7 @@ public class XDocReportEntryResourceLoader
     /**
      * @see org.apache.velocity.runtime.resource.loader.ResourceLoader#isSourceModified(org.apache.velocity.runtime.resource.Resource)
      */
+    @Override
     public boolean isSourceModified( Resource resource )
     {
         return getLastModified( resource ) != resource.getLastModified();
@@ -116,6 +110,7 @@ public class XDocReportEntryResourceLoader
     /**
      * @see org.apache.velocity.runtime.resource.loader.ResourceLoader#getLastModified(org.apache.velocity.runtime.resource.Resource)
      */
+    @Override
     public long getLastModified( Resource resource )
     {
         String resourceName = resource.getName();
@@ -127,5 +122,4 @@ public class XDocReportEntryResourceLoader
         }
         return 0;
     }
-
 }

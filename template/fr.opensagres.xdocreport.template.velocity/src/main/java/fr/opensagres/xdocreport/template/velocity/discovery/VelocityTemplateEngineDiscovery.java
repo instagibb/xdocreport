@@ -30,7 +30,6 @@ import java.util.Properties;
 
 import org.apache.velocity.runtime.RuntimeConstants;
 
-import fr.opensagres.xdocreport.core.utils.Assert;
 import fr.opensagres.xdocreport.template.ITemplateEngine;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
 import fr.opensagres.xdocreport.template.discovery.ITemplateEngineDiscovery;
@@ -45,6 +44,7 @@ public class VelocityTemplateEngineDiscovery
     implements ITemplateEngineDiscovery, VelocityConstants
 {
 
+    @Override
     public ITemplateEngine createTemplateEngine()
     {
         Properties velocityDefaultProperties = getVelocityDefaultProperties();
@@ -88,7 +88,7 @@ public class VelocityTemplateEngineDiscovery
                 if ( Class.forName( "org.apache.velocity.runtime.log.NullLogChute" ) != null )
                 {
                     // Don't crash Velocity if NullLogChute doesn't exist
-                    velocityEngineProperties.setProperty( RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS,
+                    velocityEngineProperties.setProperty( RuntimeConstants.RUNTIME_LOG_NAME,
                                                           "org.apache.velocity.runtime.log.NullLogChute" );
                 }
             }
@@ -132,11 +132,13 @@ public class VelocityTemplateEngineDiscovery
         return null;
     }
 
+    @Override
     public String getDescription()
     {
         return DESCRIPTION_DISCOVERY;
     }
 
+    @Override
     public String getId()
     {
         return TemplateEngineKind.Velocity.name();
